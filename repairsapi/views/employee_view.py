@@ -2,7 +2,7 @@ from django.http import HttpResponseServerError
 from rest_framework.viewsets import ViewSet
 from rest_framework.response import Response
 from rest_framework import serializers, status
-from repairsapi.models import Employee
+from repairsapi.models import Employee, Customer
 
 class EmployeeView(ViewSet):
     def list(self, request):
@@ -20,4 +20,4 @@ class EmployeeView(ViewSet):
 class EmployeeSerializer(serializers.ModelSerializer):
     class Meta:
         model = Employee
-        fields = ('id', 'specialty', 'user_id')
+        fields = ('id', 'specialty', 'full_name')

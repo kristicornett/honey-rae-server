@@ -3,10 +3,10 @@ from django.http import HttpResponseServerError
 from rest_framework.viewsets import ViewSet
 from rest_framework.response import Response
 from rest_framework import serializers, status
-from repairsapi.models import Customer, Employee
+from repairsapi.models import Customer
 
 
-class CustomerView(ViewSet):
+class UserView(ViewSet):
     """Honey Rae API customers view"""
 
     def list(self, request):
@@ -30,7 +30,6 @@ class CustomerView(ViewSet):
         customer = Customer.objects.get(pk=pk)
         serialized = CustomerSerializer(customer)
         return Response(serialized.data, status=status.HTTP_200_OK)
-    
 
 
 class CustomerSerializer(serializers.ModelSerializer):
