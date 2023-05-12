@@ -31,6 +31,13 @@ class ServiceTicketView(ViewSet):
             if 'status' in request.query_params:
                 if request.query_params['status'] == 'done':
                     tickets = tickets.filter(date_completed__isnull=False)
+                if request.query_params['status'] == 'unclaimed':
+                    tickets = tickets.filter(date_completed__isnull=True, employee_id__isnull=True)
+                if request.query_params['status'] == 'inprogress':
+                    tickets = tickets.filter(date_completed__isnull=True, employee_id__isnull=False)
+                if 'search_query' in request.query_params['status']:
+                    search_query = request.query_params['status'].split('--')[1]
+                    tickets = tickets.filter(description__contains=search_query)
         else:
             tickets = ServiceTicket.objects.filter(customer__user=request.auth.user)
         serialized = TicketSerializer(tickets, many=True)
@@ -56,10 +63,12 @@ class ServiceTicketView(ViewSet):
         ticket = ServiceTicket.objects.get(pk=pk)
         # Get the employee id from the client request
         employee_id = request.data['employee']
+        date_completed = request.data['date_completed']
         # Select the employee from the database using that id
         assigned_employee = Employee.objects.get(pk=employee_id)
         #Assign that Employee instance to the employee property of the ticket
         ticket.employee = assigned_employee
+        ticket.date_completed = date_completed
         # Save the uploaded ticket
         ticket.save()
         return Response(None, status=status.HTTP_204_NO_CONTENT)
